@@ -128,7 +128,7 @@ namespace DataArchiver
             HttpResponseMessage res = httpClient.GetAsync("https://www.habbo." + tld + "/gamedata/furnidata_xml/1").GetAwaiter().GetResult();
             string source = res.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
-            var fileVars = Path.Combine(writeDirectory, tld, "furnidata_xml.xml");
+            var fileVars = Path.Combine(writeDirectory, tld, "furnidata.xml");
             File.WriteAllText(fileVars, source);
         }
 
@@ -137,7 +137,7 @@ namespace DataArchiver
             HttpResponseMessage res = httpClient.GetAsync("https://www.habbo." + tld + "/gamedata/productdata/1").GetAwaiter().GetResult();
             string source = res.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
-            var fileVars = Path.Combine(writeDirectory, tld, "furnidata.txt");
+            var fileVars = Path.Combine(writeDirectory, tld, "productdata.txt");
             File.WriteAllText(fileVars, source);
         }
 
@@ -146,7 +146,7 @@ namespace DataArchiver
             HttpResponseMessage res = httpClient.GetAsync("https://www.habbo." + tld + "/gamedata/productdata_xml/1").GetAwaiter().GetResult();
             string source = res.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
-            var fileVars = Path.Combine(writeDirectory, tld, "furnidata_xml.xml");
+            var fileVars = Path.Combine(writeDirectory, tld, "productdata.xml");
             File.WriteAllText(fileVars, source);
         }
     }
