@@ -1,21 +1,80 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DataArchiver
 {
+    public class FurniItem
+    {
+        public string Type;
+        public int SpriteId;
+        public string FileName;
+        public string Revision;
+        public string Unknown;
+        public int Length;
+        public int Width;
+        public string Colour;
+        public string Name;
+        public string Description;
+        public string[] RawData
+        {
+            get
+            {
+                return new string[] { Type, Convert.ToString(SpriteId), FileName, Revision, Unknown, Length == -1 ? "" : Convert.ToString(Length), Width == -1 ? "" : Convert.ToString(Width), Colour, Name, Description };
+            }
+        }
+
+        public bool Ignore;
+
+        public FurniItem(string[] data)
+        {
+            this.Type = data[0];
+            this.SpriteId = int.Parse(data[1]);
+            this.FileName = data[2];
+            this.Revision = data[3];
+            this.Unknown = data[4];
+            try
+            {
+                this.Length = Convert.ToInt32(data[5]);
+                this.Width = Convert.ToInt32(data[6]);
+            }
+            catch (Exception ex)
+            {
+                this.Length = -1;
+                this.Width = -1;
+            }
+
+            this.Colour = data[7];
+            this.Name = data[8];
+            this.Description = data[9];
+        }
+
+        public FurniItem(int SpriteId)
+        {
+            this.SpriteId = SpriteId;
+            this.Ignore = true;
+        }
+    }
+
     class Program
     {
         private static HttpClient httpClient = new HttpClient();
+        private static List<FurniItem> ItemList;
+        private static List<string> Downloading;
 
         static void Main(string[] args)
         {
             var writeDirectory = string.Format("{0}-{1}", "gamedata", DateTime.Now.ToString("yyyy-dd-M"));
             List<string> countryTLDs = new List<string>();
+
+            Downloading = new List<string>();
 
             try
             {
@@ -28,65 +87,77 @@ namespace DataArchiver
                 countryTLDs.Add("com.br");
                 countryTLDs.Add("es");
 
-                if (Directory.Exists(writeDirectory))
-                    Directory.Delete(writeDirectory, true);
-
                 if (!Directory.Exists(writeDirectory))
+                {
                     Directory.CreateDirectory(writeDirectory);
 
-                httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36");
+                    httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36");
 
-                foreach (var tld in countryTLDs)
-                {
-                    var outputDir = Path.Combine(writeDirectory, tld);
+                    foreach (var tld in countryTLDs)
+                    {
+                        var outputDir = Path.Combine(writeDirectory, tld);
 
-                    if (!Directory.Exists(outputDir))
-                        Directory.CreateDirectory(outputDir);
+                        if (!Directory.Exists(outputDir))
+                            Directory.CreateDirectory(outputDir);
 
-                    Console.WriteLine("Downloading external vars for hotel: " + tld);
-                    ArchiveExternalVariables(writeDirectory, outputDir, tld);
+                        Console.WriteLine("Downloading external vars for hotel: " + tld);
+                        ArchiveExternalVariables(writeDirectory, outputDir, tld);
+                    }
+
+                    foreach (var tld in countryTLDs)
+                    {
+                        var outputDir = Path.Combine(writeDirectory, tld);
+
+                        Console.WriteLine("Downloading external texts for hotel: " + tld);
+                        ArchiveExternalTexts(writeDirectory, outputDir, tld);
+                    }
+
+                    foreach (var tld in countryTLDs)
+                    {
+                        var outputDir = Path.Combine(writeDirectory, tld);
+
+                        Console.WriteLine("Downloading furnidata texts for hotel: " + tld);
+                        ArchiveFurnidataTexts(writeDirectory, outputDir, tld);
+                    }
+
+                    foreach (var tld in countryTLDs)
+                    {
+                        var outputDir = Path.Combine(writeDirectory, tld);
+
+                        Console.WriteLine("Downloading furnidata XML for hotel: " + tld);
+                        ArchiveFurnidataXML(writeDirectory, outputDir, tld);
+                    }
+
+                    foreach (var tld in countryTLDs)
+                    {
+                        var outputDir = Path.Combine(writeDirectory, tld);
+
+                        Console.WriteLine("Downloading productdata texts for hotel: " + tld);
+                        ArchiveProductdataTexts(writeDirectory, outputDir, tld);
+                    }
+
+                    foreach (var tld in countryTLDs)
+                    {
+                        var outputDir = Path.Combine(writeDirectory, tld);
+
+                        Console.WriteLine("Downloading productdata XML for hotel: " + tld);
+                        ArchiveProductdataXML(writeDirectory, outputDir, tld);
+                    }
                 }
 
-                foreach (var tld in countryTLDs)
-                {
-                    var outputDir = Path.Combine(writeDirectory, tld);
+                var officialFileContents = File.ReadAllText(Path.Combine(writeDirectory, "com", "furnidata.txt"));
+                officialFileContents = officialFileContents.Replace("]]\n[[", "],[");
+                var officialFurnidataList = JsonConvert.DeserializeObject<List<string[]>>(officialFileContents);
 
-                    Console.WriteLine("Downloading external texts for hotel: " + tld);
-                    ArchiveExternalTexts(writeDirectory, outputDir, tld);
+                ItemList = new List<FurniItem>();
+
+                foreach (var stringArray in officialFurnidataList)
+                {
+                    ItemList.Add(new FurniItem(stringArray));
                 }
 
-                foreach (var tld in countryTLDs)
-                {
-                    var outputDir = Path.Combine(writeDirectory, tld);
-
-                    Console.WriteLine("Downloading furnidata texts for hotel: " + tld);
-                    ArchiveFurnidataTexts(writeDirectory, outputDir, tld);
-                }
-
-                foreach (var tld in countryTLDs)
-                {
-                    var outputDir = Path.Combine(writeDirectory, tld);
-
-                    Console.WriteLine("Downloading furnidata XML for hotel: " + tld);
-                    ArchiveFurnidataXML(writeDirectory, outputDir, tld);
-                }
-
-                foreach (var tld in countryTLDs)
-                {
-                    var outputDir = Path.Combine(writeDirectory, tld);
-
-                    Console.WriteLine("Downloading productdata texts for hotel: " + tld);
-                    ArchiveProductdataTexts(writeDirectory, outputDir, tld);
-                }
-
-                foreach (var tld in countryTLDs)
-                {
-                    var outputDir = Path.Combine(writeDirectory, tld);
-
-                    Console.WriteLine("Downloading productdata XML for hotel: " + tld);
-                    ArchiveProductdataXML(writeDirectory, outputDir, tld);
-                }
-            } 
+                DownloadFurniture(writeDirectory, Path.Combine(writeDirectory, "com", "furnidata.txt"));
+            }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
@@ -94,6 +165,56 @@ namespace DataArchiver
 
             Console.WriteLine("Done!");
             Console.Read();
+        }
+
+        private static void DownloadFurniture(string writeDirectory, string furnidata)
+        {
+            string furniDirectory = Path.Combine(writeDirectory, "hof_furni");
+
+            if (!Directory.Exists(furniDirectory))
+            {
+                Directory.CreateDirectory(furniDirectory);
+            }
+
+            foreach (var item in ItemList)
+            {
+                var sprite = item.FileName;
+
+                if (item.FileName.Contains("*"))
+                {
+                    sprite = item.FileName.Split('*')[0];
+                }
+
+                if (Downloading.Contains(sprite))
+                {
+                    continue;
+                }
+
+                Downloading.Add(sprite);
+
+                var writePath = Path.Combine(furniDirectory, sprite + ".swf");
+                var url = "https://images.habbo.com/dcr/hof_furni/" + item.Revision + "/" + sprite + ".swf";
+
+                try
+                {
+
+                    var webClient = new WebClient();
+                    webClient.DownloadFile(url, writePath);
+
+                    Console.WriteLine("Downloaded: " + sprite);
+                }
+                catch
+                {
+
+                }
+            }
+        }
+
+        private static void webClient_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            var test = ((System.Net.WebClient)(sender));
+            string fileIdentifier = ((System.Net.WebClient)(sender)).QueryString["file"];
+            Console.WriteLine("Completed file download: " + fileIdentifier);
         }
 
         private static void ArchiveExternalVariables(string writeDirectory, string outputDir, string tld)
