@@ -192,21 +192,37 @@ namespace DataArchiver
 
                 Downloading.Add(sprite);
 
+                TryDownload(sprite, item.Revision, furniDirectory);
+            }
+        }
+
+        private static void TryDownload(string sprite, string revision, string furniDirectory)
+        {
+            DownloadRequest(sprite, furniDirectory, revision);
+            DownloadRequest(sprite + "cmp", furniDirectory, revision);
+            DownloadRequest(sprite + "camp", furniDirectory, revision);
+            DownloadRequest(sprite + "_cmp", furniDirectory, revision);
+            DownloadRequest(sprite + "_camp", furniDirectory, revision);
+            DownloadRequest(sprite + "campagin", furniDirectory, revision);
+            DownloadRequest(sprite + "_campagin", furniDirectory, revision);
+        }
+
+        private static void DownloadRequest(string sprite, string furniDirectory, string revision)
+        {
+
+            try
+            {
                 var writePath = Path.Combine(furniDirectory, sprite + ".swf");
-                var url = "https://images.habbo.com/dcr/hof_furni/" + item.Revision + "/" + sprite + ".swf";
+                var url = "https://images.habbo.com/dcr/hof_furni/" + revision + "/" + sprite + ".swf";
 
-                try
-                {
+                var webClient = new WebClient();
+                webClient.DownloadFile(url, writePath);
 
-                    var webClient = new WebClient();
-                    webClient.DownloadFile(url, writePath);
+                Console.WriteLine("Downloaded: " + sprite);
+            }
+            catch
+            {
 
-                    Console.WriteLine("Downloaded: " + sprite);
-                }
-                catch
-                {
-
-                }
             }
         }
 
