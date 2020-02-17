@@ -185,6 +185,11 @@ namespace DataArchiver
                     sprite = item.FileName.Split('*')[0];
                 }
 
+                if (sprite != "ads_lin_wh_c")
+                {
+                    continue;
+                }
+
                 if (Downloading.Contains(sprite))
                 {
                     continue;
@@ -196,17 +201,48 @@ namespace DataArchiver
             }
         }
 
-        private static void TryDownload(string sprite, string revision, string furniDirectory)
+        private static void TryDownload(string sprite, string revision, string furniDirectory, bool slowMode = true)
         {
             DownloadRequest(sprite, furniDirectory, revision);
-            DownloadRequest(sprite + "cmp", furniDirectory, revision);
-            DownloadRequest(sprite + "camp", furniDirectory, revision);
-            DownloadRequest(sprite + "_cmp", furniDirectory, revision);
-            DownloadRequest(sprite + "_camp", furniDirectory, revision);
-            DownloadRequest(sprite + "campagin", furniDirectory, revision);
-            DownloadRequest(sprite + "_campagin", furniDirectory, revision);
-        }
 
+            if (slowMode)
+            {
+                DownloadRequest(sprite + "cmp", furniDirectory, revision);
+                DownloadRequest(sprite + "camp", furniDirectory, revision);
+                DownloadRequest(sprite + "_cmp", furniDirectory, revision);
+                DownloadRequest(sprite + "_camp", furniDirectory, revision);
+                DownloadRequest(sprite + "campagin", furniDirectory, revision);
+                DownloadRequest(sprite + "_campagin", furniDirectory, revision);
+            
+                for (int i = 0; i < 5; i++)
+                {
+                    DownloadRequest(string.Format("{0}{1}", sprite, i), furniDirectory, revision);
+                    /*var newSprite = string.Format("{0}{1}", sprite, i);
+                    var url = "https://images.habbo.com/dcr/hof_furni/" + revision + "/" + newSprite + ".swf";
+
+                    bool furniExists = false;
+                    Console.WriteLine("Checking furni: " + newSprite);
+
+                    try
+                    {
+                        var client = new WebClient();
+                        client.DownloadString(url);
+                        furniExists = true;
+                    } 
+                    catch
+                    {
+
+                    }
+
+                    if (furniExists)
+                    {
+                        Console.WriteLine("Furni exists: " + url);
+                        DownloadRequest(newSprite, furniDirectory, revision);
+                    }*/
+
+                }
+            }
+        }
         private static void DownloadRequest(string sprite, string furniDirectory, string revision)
         {
 
