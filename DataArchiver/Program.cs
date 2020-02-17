@@ -156,7 +156,7 @@ namespace DataArchiver
                     ItemList.Add(new FurniItem(stringArray));
                 }
 
-                //DownloadPosters(writeDirectory, Path.Combine(writeDirectory, "com", "furnidata.txt"));
+                DownloadPosters(writeDirectory, Path.Combine(writeDirectory, "com", "furnidata.txt"));
                 DownloadFurniture(writeDirectory, Path.Combine(writeDirectory, "com", "furnidata.txt"));
             }
             catch (Exception ex)
@@ -176,6 +176,8 @@ namespace DataArchiver
             {
                 Directory.CreateDirectory(furniDirectory);
             }
+
+            Downloading.Clear();
 
             foreach (var item in ItemList)
             {
@@ -219,6 +221,8 @@ namespace DataArchiver
                 Directory.CreateDirectory(furniDirectory);
             }
 
+            Downloading.Clear();
+
             foreach (var item in ItemList)
             {
                 var sprite = item.FileName;
@@ -233,7 +237,8 @@ namespace DataArchiver
                     continue;
                 }
 
-                Downloading.Add(sprite);
+                if (sprite.ToLower() == "footylamp")
+                    TryDownload("footylamp_campaign_ing", item.Revision, furniDirectory);
 
                 char lastCharacter = sprite[sprite.Length - 1];
 
@@ -244,7 +249,7 @@ namespace DataArchiver
                 }
             }
 
-            Downloading.Clear();
+
 
             foreach (var item in ItemList)
             {
@@ -315,6 +320,8 @@ namespace DataArchiver
 
             try
             {
+                Downloading.Add(sprite);
+
                 var writePath = Path.Combine(furniDirectory, sprite + ".swf");
 
                 if (File.Exists(writePath))
