@@ -156,7 +156,7 @@ namespace DataArchiver
                     ItemList.Add(new FurniItem(stringArray));
                 }
 
-                DownloadPosters(writeDirectory, Path.Combine(writeDirectory, "com", "furnidata.txt"));
+                //DownloadPosters(writeDirectory, Path.Combine(writeDirectory, "com", "furnidata.txt"));
                 DownloadFurniture(writeDirectory, Path.Combine(writeDirectory, "com", "furnidata.txt"));
             }
             catch (Exception ex)
@@ -235,6 +235,33 @@ namespace DataArchiver
 
                 Downloading.Add(sprite);
 
+                char lastCharacter = sprite[sprite.Length - 1];
+
+                if (Char.IsDigit(lastCharacter) && sprite.ToLower().StartsWith("ads"))
+                {
+                    var newSprite = sprite.Substring(0, sprite.Length - 1);
+                    TryDownload(newSprite, item.Revision, furniDirectory);
+                }
+            }
+
+            Downloading.Clear();
+
+            foreach (var item in ItemList)
+            {
+                var sprite = item.FileName;
+
+                if (item.FileName.Contains("*"))
+                {
+                    sprite = item.FileName.Split('*')[0];
+                }
+
+                if (Downloading.Contains(sprite))
+                {
+                    continue;
+                }
+
+                Downloading.Add(sprite);
+
                 TryDownload(sprite, item.Revision, furniDirectory);
             }
         }
@@ -251,6 +278,8 @@ namespace DataArchiver
                 DownloadRequest(sprite + "_camp", furniDirectory, revision);
                 DownloadRequest(sprite + "campagin", furniDirectory, revision);
                 DownloadRequest(sprite + "_campagin", furniDirectory, revision);
+                DownloadRequest(sprite + "c", furniDirectory, revision);
+                DownloadRequest(sprite + "_c", furniDirectory, revision);
 
                 for (int i = 0; i < 5; i++)
                 {
