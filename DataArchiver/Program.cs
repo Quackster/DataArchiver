@@ -249,7 +249,7 @@ namespace DataArchiver
                 }
             }
 
-
+            Downloading.Clear();
 
             foreach (var item in ItemList)
             {
@@ -264,8 +264,6 @@ namespace DataArchiver
                 {
                     continue;
                 }
-
-                Downloading.Add(sprite);
 
                 TryDownload(sprite, item.Revision, furniDirectory);
             }
