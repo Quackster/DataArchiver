@@ -278,11 +278,11 @@ namespace DataArchiver
             if (slowMode)
             {
                 DownloadRequest(sprite + "cmp", furniDirectory, revision);
-                DownloadRequest(sprite + "camp", furniDirectory, revision);
                 DownloadRequest(sprite + "_cmp", furniDirectory, revision);
+                DownloadRequest(sprite + "camp", furniDirectory, revision);
                 DownloadRequest(sprite + "_camp", furniDirectory, revision);
-                DownloadRequest(sprite + "campagin", furniDirectory, revision);
-                DownloadRequest(sprite + "_campagin", furniDirectory, revision);
+                DownloadRequest(sprite + "campaign", furniDirectory, revision);
+                DownloadRequest(sprite + "_campaign", furniDirectory, revision);
                 DownloadRequest(sprite + "c", furniDirectory, revision);
                 DownloadRequest(sprite + "_c", furniDirectory, revision);
 
