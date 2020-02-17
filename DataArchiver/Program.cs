@@ -156,6 +156,7 @@ namespace DataArchiver
                     ItemList.Add(new FurniItem(stringArray));
                 }
 
+                DownloadPosters(writeDirectory, Path.Combine(writeDirectory, "com", "furnidata.txt"));
                 DownloadFurniture(writeDirectory, Path.Combine(writeDirectory, "com", "furnidata.txt"));
             }
             catch (Exception ex)
@@ -165,6 +166,48 @@ namespace DataArchiver
 
             Console.WriteLine("Done!");
             Console.Read();
+        }
+
+        private static void DownloadPosters(string writeDirectory, string v)
+        {
+            string furniDirectory = Path.Combine(writeDirectory, "hof_furni");
+
+            if (!Directory.Exists(furniDirectory))
+            {
+                Directory.CreateDirectory(furniDirectory);
+            }
+
+            foreach (var item in ItemList)
+            {
+                var sprite = item.FileName;
+
+                if (item.FileName.Contains("*"))
+                {
+                    sprite = item.FileName.Split('*')[0];
+                }
+
+                if (sprite != "poster")
+                {
+                    continue;
+                }
+
+                if (Downloading.Contains(sprite))
+                {
+                    continue;
+                }
+
+                if (sprite == "poster")
+                {
+                    for (int i = 0; i < 5000; i++)
+                    {
+                        sprite = "poster" + i;
+                        Downloading.Add(sprite);
+                        TryDownload(sprite, item.Revision, furniDirectory, false);
+                    }
+                }
+
+                break;
+            }
         }
 
         private static void DownloadFurniture(string writeDirectory, string furnidata)
@@ -185,11 +228,6 @@ namespace DataArchiver
                     sprite = item.FileName.Split('*')[0];
                 }
 
-                if (sprite != "ads_lin_wh_c")
-                {
-                    continue;
-                }
-
                 if (Downloading.Contains(sprite))
                 {
                     continue;
@@ -203,7 +241,7 @@ namespace DataArchiver
 
         private static void TryDownload(string sprite, string revision, string furniDirectory, bool slowMode = true)
         {
-            DownloadRequest(sprite, furniDirectory, revision);
+            DownloadRequest(sprite, furniDirectory, revision, false);
 
             if (slowMode)
             {
@@ -213,10 +251,10 @@ namespace DataArchiver
                 DownloadRequest(sprite + "_camp", furniDirectory, revision);
                 DownloadRequest(sprite + "campagin", furniDirectory, revision);
                 DownloadRequest(sprite + "_campagin", furniDirectory, revision);
-            
+
                 for (int i = 0; i < 5; i++)
                 {
-                    DownloadRequest(string.Format("{0}{1}", sprite, i), furniDirectory, revision);
+                    DownloadRequest(string.Format("{0}{1}", sprite, i), furniDirectory, revision, true);
                     /*var newSprite = string.Format("{0}{1}", sprite, i);
                     var url = "https://images.habbo.com/dcr/hof_furni/" + revision + "/" + newSprite + ".swf";
 
@@ -243,12 +281,18 @@ namespace DataArchiver
                 }
             }
         }
-        private static void DownloadRequest(string sprite, string furniDirectory, string revision)
+        private static void DownloadRequest(string sprite, string furniDirectory, string revision, bool isHidden = true)
         {
 
             try
             {
                 var writePath = Path.Combine(furniDirectory, sprite + ".swf");
+
+                if (File.Exists(writePath))
+                {
+                    return;
+                }
+
                 var url = "https://images.habbo.com/dcr/hof_furni/" + revision + "/" + sprite + ".swf";
 
                 var webClient = new WebClient();
