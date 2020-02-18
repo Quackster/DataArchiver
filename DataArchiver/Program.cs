@@ -242,10 +242,10 @@ namespace DataArchiver
 
                 char lastCharacter = sprite[sprite.Length - 1];
 
-                if (Char.IsDigit(lastCharacter) && sprite.ToLower().StartsWith("ads"))
+                if (Char.IsDigit(lastCharacter))
                 {
                     var newSprite = sprite.Substring(0, sprite.Length - 1);
-                    TryDownload(newSprite, item.Revision, furniDirectory);
+                    TryDownload(newSprite, item.Revision, furniDirectory, true);
                 }
             }
 
@@ -269,20 +269,20 @@ namespace DataArchiver
             }
         }
 
-        private static void TryDownload(string sprite, string revision, string furniDirectory, bool slowMode = true)
+        private static void TryDownload(string sprite, string revision, string furniDirectory, bool slowMode = true, bool isHiddenOverride = false)
         {
-            DownloadRequest(sprite, furniDirectory, revision, false);
+            DownloadRequest(sprite, furniDirectory, revision, isHiddenOverride);
 
             if (slowMode)
             {
-                DownloadRequest(sprite + "cmp", furniDirectory, revision);
-                DownloadRequest(sprite + "_cmp", furniDirectory, revision);
-                DownloadRequest(sprite + "camp", furniDirectory, revision);
-                DownloadRequest(sprite + "_camp", furniDirectory, revision);
-                DownloadRequest(sprite + "campaign", furniDirectory, revision);
-                DownloadRequest(sprite + "_campaign", furniDirectory, revision);
-                DownloadRequest(sprite + "c", furniDirectory, revision);
-                DownloadRequest(sprite + "_c", furniDirectory, revision);
+                DownloadRequest(sprite + "cmp", furniDirectory, revision, true);
+                DownloadRequest(sprite + "_cmp", furniDirectory, revision, true);
+                DownloadRequest(sprite + "camp", furniDirectory, revision, true);
+                DownloadRequest(sprite + "_camp", furniDirectory, revision, true);
+                DownloadRequest(sprite + "campaign", furniDirectory, revision, true);
+                DownloadRequest(sprite + "_campaign", furniDirectory, revision, true);
+                DownloadRequest(sprite + "c", furniDirectory, revision, true);
+                DownloadRequest(sprite + "_c", furniDirectory, revision, true);
 
                 for (int i = 0; i < 5; i++)
                 {
@@ -313,7 +313,7 @@ namespace DataArchiver
                 }
             }
         }
-        private static void DownloadRequest(string sprite, string furniDirectory, string revision, bool isHidden = true)
+        private static void DownloadRequest(string sprite, string furniDirectory, string revision, bool isHidden)
         {
 
             try
@@ -332,7 +332,12 @@ namespace DataArchiver
                 var webClient = new WebClient();
                 webClient.DownloadFile(url, writePath);
 
-                Console.WriteLine("Downloaded: " + sprite);
+                if (isHidden)
+                {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine("Downloaded: " + sprite);
+                    Console.ResetColor();
+                }
             }
             catch
             {
