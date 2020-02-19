@@ -286,7 +286,7 @@ namespace DataArchiver
 
                 for (int i = 0; i < 5; i++)
                 {
-                    DownloadRequest(string.Format("{0}{1}", sprite, i), furniDirectory, revision, true);
+                    DownloadRequest(string.Format("{0}{1}", sprite, i), furniDirectory, revision, false);
                     /*var newSprite = string.Format("{0}{1}", sprite, i);
                     var url = "https://images.habbo.com/dcr/hof_furni/" + revision + "/" + newSprite + ".swf";
 
