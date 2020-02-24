@@ -86,6 +86,7 @@ namespace DataArchiver
                 countryTLDs.Add("nl");
                 countryTLDs.Add("com.br");
                 countryTLDs.Add("es");
+                countryTLDs.Add("com.tr");
 
                 if (!Directory.Exists(writeDirectory))
                 {
