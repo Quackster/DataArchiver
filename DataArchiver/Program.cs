@@ -109,8 +109,8 @@ namespace DataArchiver
                     {
                         var outputDir = Path.Combine(writeDirectory, tld);
 
-                        Console.WriteLine("Downloading external texts for hotel: " + tld);
-                        ArchiveExternalTexts(writeDirectory, outputDir, tld);
+                        Console.WriteLine("Downloading external override variables for hotel: " + tld);
+                        ArchiveExternalOverrideVariables(writeDirectory, outputDir, tld);
                     }
 
                     foreach (var tld in countryTLDs)
@@ -359,6 +359,16 @@ namespace DataArchiver
             string source = res.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
             var fileVars = Path.Combine(writeDirectory, tld, "external_variables.txt");
+            File.WriteAllText(fileVars, source);
+        }
+
+
+        private static void ArchiveExternalOverrideVariables(string writeDirectory, string outputDir, string tld)
+        {
+            HttpResponseMessage res = httpClient.GetAsync("https://www.habbo." + tld + "/gamedata/external_override_variables/1").GetAwaiter().GetResult();
+            string source = res.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+            var fileVars = Path.Combine(writeDirectory, tld, "external_override_variables.txt");
             File.WriteAllText(fileVars, source);
         }
 
