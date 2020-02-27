@@ -98,6 +98,9 @@ namespace DataArchiver
                     {
                         var outputDir = Path.Combine(writeDirectory, tld);
 
+                        if (!Directory.Exists(outputDir))
+                            Directory.CreateDirectory(outputDir);
+
                         Console.WriteLine("Downloading external texts for hotel: " + tld);
                         ArchiveExternalTexts(writeDirectory, outputDir, tld);
                     }
