@@ -192,6 +192,8 @@ namespace DataArchiver
 
             Downloading.Clear();
 
+            string posterRevision = null;
+
             foreach (var item in ItemList)
             {
                 var sprite = item.FileName;
@@ -213,15 +215,35 @@ namespace DataArchiver
 
                 if (sprite == "poster")
                 {
-                    for (int i = 0; i < 5000; i++)
+                    posterRevision = item.Revision;
+                    //for (int i = 0; i < 5000; i++)
                     {
-                        sprite = "poster" + i;
-                        Downloading.Add(sprite);
-                        TryDownload(sprite, item.Revision, furniDirectory, false);
+                        //sprite = "poster" + i;
+                        //Downloading.Add(sprite);
+                        //TryDownload(sprite, item.Revision, furniDirectory, false);
                     }
                 }
 
                 break;
+            }
+
+            if (posterRevision != null)
+            {
+                string[] lines = File.ReadAllLines(Path.Combine(writeDirectory, "com", "external_flash_texts.txt"));
+                
+                foreach (var line in lines)
+                {
+                    if (!line.StartsWith("poster"))
+                        continue;
+
+                    if (!line.Contains("_name="))
+                        continue;
+
+                    string equals = line.Substring(0, line.IndexOf('='));
+                    string poster = equals.Split('_')[1];
+
+                    TryDownload("poster" + poster, posterRevision, furniDirectory, false);
+                }
             }
         }
 
