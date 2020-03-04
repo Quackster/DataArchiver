@@ -366,6 +366,7 @@ namespace DataArchiver
 
                 var webClient = new WebClient();
                 webClient.DownloadFile(url, writePath);
+                archiveFile("https://web.archive.org/save/" + url);
 
                 if (isHidden)
                 {
@@ -380,18 +381,10 @@ namespace DataArchiver
             }
         }
 
-        private static void webClient_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
-        {
-            var test = ((System.Net.WebClient)(sender));
-            string fileIdentifier = ((System.Net.WebClient)(sender)).QueryString["file"];
-            Console.WriteLine("Completed file download: " + fileIdentifier);
-        }
 
         private static void ArchiveExternalVariables(string writeDirectory, string outputDir, string tld)
         {
-            HttpResponseMessage res = httpClient.GetAsync("https://www.habbo." + tld + "/gamedata/external_variables/1").GetAwaiter().GetResult();
-            string source = res.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
+            string source = getResponse("https://www.habbo." + tld + "/gamedata/external_variables/1");
             var fileVars = Path.Combine(writeDirectory, tld, "external_variables.txt");
             File.WriteAllText(fileVars, source);
         }
@@ -399,56 +392,65 @@ namespace DataArchiver
 
         private static void ArchiveExternalOverrideVariables(string writeDirectory, string outputDir, string tld)
         {
-            HttpResponseMessage res = httpClient.GetAsync("https://www.habbo." + tld + "/gamedata/external_override_variables/1").GetAwaiter().GetResult();
-            string source = res.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
+            string source = getResponse("https://www.habbo." + tld + "/gamedata/external_override_variables/1");
             var fileVars = Path.Combine(writeDirectory, tld, "external_override_variables.txt");
             File.WriteAllText(fileVars, source);
         }
 
         private static void ArchiveExternalTexts(string writeDirectory, string outputDir, string tld)
         {
-            HttpResponseMessage res = httpClient.GetAsync("https://www.habbo." + tld + "/gamedata/external_flash_texts/1").GetAwaiter().GetResult();
-            string source = res.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
+            string source = getResponse("https://www.habbo." + tld + "/gamedata/external_flash_texts/1");
             var fileVars = Path.Combine(writeDirectory, tld, "external_flash_texts.txt");
             File.WriteAllText(fileVars, source);
         }
 
         private static void ArchiveFurnidataTexts(string writeDirectory, string outputDir, string tld)
         {
-            HttpResponseMessage res = httpClient.GetAsync("https://www.habbo." + tld + "/gamedata/furnidata/1").GetAwaiter().GetResult();
-            string source = res.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
+            string source = getResponse("https://www.habbo." + tld + "/gamedata/furnidata/1");
             var fileVars = Path.Combine(writeDirectory, tld, "furnidata.txt");
             File.WriteAllText(fileVars, source);
         }
 
         private static void ArchiveFurnidataXML(string writeDirectory, string outputDir, string tld)
         {
-            HttpResponseMessage res = httpClient.GetAsync("https://www.habbo." + tld + "/gamedata/furnidata_xml/1").GetAwaiter().GetResult();
-            string source = res.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
+            string source = getResponse("https://www.habbo." + tld + "/gamedata/furnidatadata_xml/1");
             var fileVars = Path.Combine(writeDirectory, tld, "furnidata.xml");
             File.WriteAllText(fileVars, source);
         }
 
         private static void ArchiveProductdataTexts(string writeDirectory, string outputDir, string tld)
         {
-            HttpResponseMessage res = httpClient.GetAsync("https://www.habbo." + tld + "/gamedata/productdata/1").GetAwaiter().GetResult();
-            string source = res.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
+            string source = getResponse("https://www.habbo." + tld + "/gamedata/productdata/1");
             var fileVars = Path.Combine(writeDirectory, tld, "productdata.txt");
             File.WriteAllText(fileVars, source);
         }
 
         private static void ArchiveProductdataXML(string writeDirectory, string outputDir, string tld)
         {
-            HttpResponseMessage res = httpClient.GetAsync("https://www.habbo." + tld + "/gamedata/productdata_xml/1").GetAwaiter().GetResult();
-            string source = res.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-
+            string source = getResponse("https://www.habbo." + tld + "/gamedata/productdata_xml/1");
             var fileVars = Path.Combine(writeDirectory, tld, "productdata.xml");
             File.WriteAllText(fileVars, source);
+        }
+
+        private static string getResponse(string url)
+        {
+            HttpResponseMessage res = httpClient.GetAsync(url).GetAwaiter().GetResult();
+            string source = res.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            archiveFile(url);
+            return source;
+        }
+
+
+        private static void archiveFile(string url)
+        {
+            WebClient webClient = new WebClient();
+            //webClient.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36");
+
+            try
+            {
+                webClient.DownloadString("https://web.archive.org/save/" + url);
+            }
+            catch { }
         }
     }
 }
