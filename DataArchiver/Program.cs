@@ -413,7 +413,7 @@ namespace DataArchiver
 
         private static void ArchiveFurnidataXML(string writeDirectory, string outputDir, string tld)
         {
-            string source = getResponse("https://www.habbo." + tld + "/gamedata/furnidatadata_xml/1");
+            string source = getResponse("https://www.habbo." + tld + "/gamedata/furnidata_xml/1");
             var fileVars = Path.Combine(writeDirectory, tld, "furnidata.xml");
             File.WriteAllText(fileVars, source);
         }
