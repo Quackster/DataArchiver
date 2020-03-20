@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace DataArchiver
 {
@@ -366,7 +367,7 @@ namespace DataArchiver
 
                 var webClient = new WebClient();
                 webClient.DownloadFile(url, writePath);
-                archiveFile("https://web.archive.org/save/" + url);
+                //archiveFile("https://web.archive.org/save/" + url);
 
                 if (isHidden)
                 {
@@ -416,6 +417,10 @@ namespace DataArchiver
             string source = getResponse("https://www.habbo." + tld + "/gamedata/furnidata_xml/1");
             var fileVars = Path.Combine(writeDirectory, tld, "furnidata.xml");
             File.WriteAllText(fileVars, source);
+
+            var doc = new XmlDocument();
+            doc.Load(fileVars);
+            doc.Save(fileVars);
         }
 
         private static void ArchiveProductdataTexts(string writeDirectory, string outputDir, string tld)
@@ -430,13 +435,17 @@ namespace DataArchiver
             string source = getResponse("https://www.habbo." + tld + "/gamedata/productdata_xml/1");
             var fileVars = Path.Combine(writeDirectory, tld, "productdata.xml");
             File.WriteAllText(fileVars, source);
+
+            var doc = new XmlDocument();
+            doc.Load(fileVars);
+            doc.Save(fileVars);
         }
 
         private static string getResponse(string url)
         {
             HttpResponseMessage res = httpClient.GetAsync(url).GetAwaiter().GetResult();
             string source = res.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-            archiveFile(url);
+            //archiveFile(url);
             return source;
         }
 
