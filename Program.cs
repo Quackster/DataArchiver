@@ -231,7 +231,7 @@ namespace DataArchiver
             if (posterRevision != null)
             {
                 string[] lines = File.ReadAllLines(Path.Combine(writeDirectory, "com", "external_flash_texts.txt"));
-                
+
                 foreach (var line in lines)
                 {
                     if (!line.StartsWith("poster"))
@@ -364,15 +364,49 @@ namespace DataArchiver
                 }
 
                 var url = "https://images.habbo.com/dcr/hof_furni/" + revision + "/" + sprite + ".swf";
+                var url2 = "https://images.habbo.com/habbo-asset-bundles/dev/2019.3.9f1/Furni/WebGL/" + revision + "/" + sprite;
 
                 var webClient = new WebClient();
                 webClient.DownloadFile(url, writePath);
                 //archiveFile("https://web.archive.org/save/" + url);
 
-                if (isHidden)
+                //if (isHidden)
                 {
                     Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("Downloaded: " + sprite);
+                    Console.WriteLine("Downloaded SWF: " + sprite);
+                    Console.ResetColor();
+                }
+            }
+            catch
+            {
+                Downloading.Remove(sprite);
+            }
+            finally
+            {
+
+            }
+
+            try
+            {
+                Downloading.Add(sprite);
+
+                var writePath = Path.Combine(furniDirectory, sprite + ".swf");
+
+                if (File.Exists(writePath))
+                {
+                    return;
+                }
+
+                var url = "https://images.habbo.com/habbo-asset-bundles/dev/2019.3.9f1/Furni/WebGL/" + revision + "/" + sprite;
+
+                var webClient = new WebClient();
+                webClient.DownloadFile(url, writePath);
+                //archiveFile("https://web.archive.org/save/" + url);
+
+                //if (isHidden)
+                {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine("Downloaded Unity version: " + sprite);
                     Console.ResetColor();
                 }
             }

@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.29418.71
+VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataArchiver", "DataArchiver\DataArchiver.csproj", "{3B3C00B1-39DB-41D3-BBD7-E21DD4E46CF5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataArchiver", "DataArchiver.csproj", "{976E9329-A8F1-4420-952F-51CF456690EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3B3C00B1-39DB-41D3-BBD7-E21DD4E46CF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3B3C00B1-39DB-41D3-BBD7-E21DD4E46CF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3B3C00B1-39DB-41D3-BBD7-E21DD4E46CF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3B3C00B1-39DB-41D3-BBD7-E21DD4E46CF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{976E9329-A8F1-4420-952F-51CF456690EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{976E9329-A8F1-4420-952F-51CF456690EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{976E9329-A8F1-4420-952F-51CF456690EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{976E9329-A8F1-4420-952F-51CF456690EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {EB108637-D49A-419B-AAE8-0A94F5CBE0B0}
+		SolutionGuid = {D025FDD8-DF7A-485F-A7F7-323FAC53D85F}
 	EndGlobalSection
 EndGlobal
