@@ -46,7 +46,7 @@ namespace DataArchiver
                 this.Length = Convert.ToInt32(data[5]);
                 this.Width = Convert.ToInt32(data[6]);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 this.Length = -1;
                 this.Width = -1;
@@ -182,13 +182,19 @@ namespace DataArchiver
             Console.Read();
         }
 
-        private static void DownloadPosters(string writeDirectory, string v)
+        private static void DownloadPosters(string writeDirectory, string furnidata)
         {
-            string furniDirectory = Path.Combine(writeDirectory, "hof_furni");
+            string furniDirectory = Path.Combine(writeDirectory, "swf_furni");
+            string unityFurniDirectory = Path.Combine(writeDirectory, "unity_furni");
 
             if (!Directory.Exists(furniDirectory))
             {
                 Directory.CreateDirectory(furniDirectory);
+            }
+
+            if (!Directory.Exists(unityFurniDirectory))
+            {
+                Directory.CreateDirectory(unityFurniDirectory);
             }
 
             Downloading.Clear();
@@ -243,18 +249,24 @@ namespace DataArchiver
                     string equals = line.Substring(0, line.IndexOf('='));
                     string poster = equals.Split('_')[1];
 
-                    TryDownload("poster" + poster, posterRevision, furniDirectory, false);
+                    TryDownload("poster" + poster, posterRevision, furniDirectory, unityFurniDirectory);
                 }
             }
         }
 
         private static void DownloadFurniture(string writeDirectory, string furnidata)
         {
-            string furniDirectory = Path.Combine(writeDirectory, "hof_furni");
+            string furniDirectory = Path.Combine(writeDirectory, "swf_furni");
+            string unityFurniDirectory = Path.Combine(writeDirectory, "unity_furni");
 
             if (!Directory.Exists(furniDirectory))
             {
                 Directory.CreateDirectory(furniDirectory);
+            }
+
+            if (!Directory.Exists(unityFurniDirectory))
+            {
+                Directory.CreateDirectory(unityFurniDirectory);
             }
 
             Downloading.Clear();
@@ -274,14 +286,14 @@ namespace DataArchiver
                 }
 
                 if (sprite.ToLower() == "footylamp")
-                    TryDownload("footylamp_campaign_ing", item.Revision, furniDirectory);
+                    TryDownload("footylamp_campaign_ing", item.Revision, furniDirectory, unityFurniDirectory);
 
                 char lastCharacter = sprite[sprite.Length - 1];
 
                 if (Char.IsDigit(lastCharacter))
                 {
                     var newSprite = sprite.Substring(0, sprite.Length - 1);
-                    TryDownload(newSprite, item.Revision, furniDirectory, true);
+                    TryDownload(newSprite, item.Revision, furniDirectory, unityFurniDirectory);
                 }
             }
 
@@ -301,77 +313,43 @@ namespace DataArchiver
                     continue;
                 }
 
-                TryDownload(sprite, item.Revision, furniDirectory);
+                TryDownload(sprite, item.Revision, furniDirectory, unityFurniDirectory);
             }
         }
 
-        private static void TryDownload(string sprite, string revision, string furniDirectory, bool slowMode = true, bool isHiddenOverride = false)
+        private static void TryDownload(string sprite, string revision, string furniDirectory, string unityFurniDirectory)
         {
-            DownloadRequest(sprite, furniDirectory, revision, isHiddenOverride);
+            DownloadRequest(sprite, furniDirectory, unityFurniDirectory, revision);
+            DownloadRequest(sprite + "cmp", furniDirectory, unityFurniDirectory, revision);
+            DownloadRequest(sprite + "_cmp", furniDirectory, unityFurniDirectory, revision);
+            DownloadRequest(sprite + "camp", furniDirectory, unityFurniDirectory, revision);
+            DownloadRequest(sprite + "_camp", furniDirectory, unityFurniDirectory, revision);
+            DownloadRequest(sprite + "campaign", furniDirectory, unityFurniDirectory, revision);
+            DownloadRequest(sprite + "_campaign", furniDirectory, unityFurniDirectory, revision);
+            DownloadRequest(sprite + "c", furniDirectory, unityFurniDirectory, revision);
+            DownloadRequest(sprite + "_c", furniDirectory, unityFurniDirectory, revision);
 
-            if (slowMode)
+            for (int i = 0; i < 10; i++)
             {
-                DownloadRequest(sprite + "cmp", furniDirectory, revision, true);
-                DownloadRequest(sprite + "_cmp", furniDirectory, revision, true);
-                DownloadRequest(sprite + "camp", furniDirectory, revision, true);
-                DownloadRequest(sprite + "_camp", furniDirectory, revision, true);
-                DownloadRequest(sprite + "campaign", furniDirectory, revision, true);
-                DownloadRequest(sprite + "_campaign", furniDirectory, revision, true);
-                DownloadRequest(sprite + "c", furniDirectory, revision, true);
-                DownloadRequest(sprite + "_c", furniDirectory, revision, true);
-
-                for (int i = 0; i < 5; i++)
-                {
-                    DownloadRequest(string.Format("{0}{1}", sprite, i), furniDirectory, revision, false);
-                    /*var newSprite = string.Format("{0}{1}", sprite, i);
-                    var url = "https://images.habbo.com/dcr/hof_furni/" + revision + "/" + newSprite + ".swf";
-
-                    bool furniExists = false;
-                    Console.WriteLine("Checking furni: " + newSprite);
-
-                    try
-                    {
-                        var client = new WebClient();
-                        client.DownloadString(url);
-                        furniExists = true;
-                    } 
-                    catch
-                    {
-
-                    }
-
-                    if (furniExists)
-                    {
-                        Console.WriteLine("Furni exists: " + url);
-                        DownloadRequest(newSprite, furniDirectory, revision);
-                    }*/
-
-                }
+                DownloadRequest(string.Format("{0}{1}", sprite, i), furniDirectory, unityFurniDirectory, revision);
             }
         }
-        private static void DownloadRequest(string sprite, string furniDirectory, string revision, bool isHidden)
-        {
 
+        private static void DownloadRequest(string sprite, string furniDirectory, string unityFurniDirectory, string revision)
+        {
             try
             {
-                Downloading.Add(sprite);
+                //Downloading.Add(sprite);
 
                 var writePath = Path.Combine(furniDirectory, sprite + ".swf");
 
-                if (File.Exists(writePath))
+                if (!File.Exists(writePath))
                 {
-                    return;
-                }
+                    var url = "https://images.habbo.com/dcr/hof_furni/" + revision + "/" + sprite + ".swf";
 
-                var url = "https://images.habbo.com/dcr/hof_furni/" + revision + "/" + sprite + ".swf";
-                var url2 = "https://images.habbo.com/habbo-asset-bundles/dev/2019.3.9f1/Furni/WebGL/" + revision + "/" + sprite;
+                    var webClient = new WebClient();
+                    webClient.DownloadFile(url, writePath);
 
-                var webClient = new WebClient();
-                webClient.DownloadFile(url, writePath);
-                //archiveFile("https://web.archive.org/save/" + url);
-
-                //if (isHidden)
-                {
                     Console.ForegroundColor = ConsoleColor.Blue;
                     Console.WriteLine("Downloaded SWF: " + sprite);
                     Console.ResetColor();
@@ -379,32 +357,26 @@ namespace DataArchiver
             }
             catch
             {
-                Downloading.Remove(sprite);
+                return;
             }
             finally
             {
-
+                //Downloading.Remove(sprite);
             }
 
             try
             {
-                Downloading.Add(sprite);
+                //Downloading.Add(sprite);
 
-                var writePath = Path.Combine(furniDirectory, sprite + ".swf");
+                var writePath = Path.Combine(unityFurniDirectory, sprite + ".unity");
 
-                if (File.Exists(writePath))
+                if (!File.Exists(writePath))
                 {
-                    return;
-                }
+                    var url = "https://images.habbo.com/habbo-asset-bundles/dev/2019.3.9f1/Furni/WebGL/" + revision + "/" + sprite;
 
-                var url = "https://images.habbo.com/habbo-asset-bundles/dev/2019.3.9f1/Furni/WebGL/" + revision + "/" + sprite;
-
-                var webClient = new WebClient();
-                webClient.DownloadFile(url, writePath);
-                //archiveFile("https://web.archive.org/save/" + url);
-
-                //if (isHidden)
-                {
+                    var webClient = new WebClient();
+                    webClient.DownloadFile(url, writePath);
+    
                     Console.ForegroundColor = ConsoleColor.Blue;
                     Console.WriteLine("Downloaded Unity version: " + sprite);
                     Console.ResetColor();
