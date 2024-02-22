@@ -362,14 +362,10 @@ namespace DataArchiver
                     Console.WriteLine("Downloaded SWF: " + sprite);
                     Console.ResetColor();
 
-                    if (isAdvertisement)
+                    if (!ItemList.Select(x => x.FileName.Contains("*") ? x.FileName.Split('*')[0] : x.FileName).Any(x => x == sprite)) 
                     {
-                        if (!ItemList.Select(x => x.FileName.Contains("*") ? item.FileName.Split('*')[0] : item.FileName).Any(x => x == sprite)) 
-                        {
-                            Log.Information("Downloaded advertisement: {originalSpriteName} => {advertisementSpriteName}", originalSpriteName, sprite);
-                        }
+                        Log.Information("Downloaded advertisement: {originalSpriteName} => {advertisementSpriteName}", originalSpriteName, sprite);
                     }
-
                 }
             }
             catch
