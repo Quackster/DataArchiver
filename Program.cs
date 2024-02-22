@@ -339,7 +339,7 @@ namespace DataArchiver
 
             for (int i = 0; i < 10; i++)
             {
-                DownloadRequest(string.Format("{0}{1}", sprite, i), furniDirectory, unityFurniDirectory, revision);
+                DownloadRequest(string.Format("{0}{1}", sprite, i), furniDirectory, unityFurniDirectory, revision, true, sprite);
             }
         }
 
