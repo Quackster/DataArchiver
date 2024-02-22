@@ -4,7 +4,7 @@ Habbo asset ripper of main gamefiles (texts, vars, etc) from all hotels includin
 
 ## Download
 
-The latest builds for Linux and Windows are found on the [latest](https://github.com/Quackster/DataArchiver/releases/tag/latest) tag.
+The latest builds for Linux and Windows are found on the [latest](https://github.com/Quackster/DataArchiver/releases/tag/latest) tag. This project requires .NET 8.
 
 | OS | Download |
 |---|---|
