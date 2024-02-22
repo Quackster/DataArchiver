@@ -75,7 +75,7 @@ namespace DataArchiver
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .WriteTo.File("logs\\log.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 
             Log.Information("Application started");
@@ -328,14 +328,14 @@ namespace DataArchiver
         private static void TryDownload(string sprite, string revision, string furniDirectory, string unityFurniDirectory)
         {
             DownloadRequest(sprite, furniDirectory, unityFurniDirectory, revision);
-            DownloadRequest(sprite + "cmp", furniDirectory, unityFurniDirectory, revision, true);
-            DownloadRequest(sprite + "_cmp", furniDirectory, unityFurniDirectory, revision, true);
-            DownloadRequest(sprite + "camp", furniDirectory, unityFurniDirectory, revision, true);
-            DownloadRequest(sprite + "_camp", furniDirectory, unityFurniDirectory, revision, true);
-            DownloadRequest(sprite + "campaign", furniDirectory, unityFurniDirectory, revision, true);
-            DownloadRequest(sprite + "_campaign", furniDirectory, unityFurniDirectory, revision, true);
-            DownloadRequest(sprite + "c", furniDirectory, unityFurniDirectory, revision, true);
-            DownloadRequest(sprite + "_c", furniDirectory, unityFurniDirectory, revision, true);
+            DownloadRequest(sprite + "cmp", furniDirectory, unityFurniDirectory, revision, true, sprite);
+            DownloadRequest(sprite + "_cmp", furniDirectory, unityFurniDirectory, revision, true, sprite);
+            DownloadRequest(sprite + "camp", furniDirectory, unityFurniDirectory, revision, true, sprite);
+            DownloadRequest(sprite + "_camp", furniDirectory, unityFurniDirectory, revision, true, sprite);
+            DownloadRequest(sprite + "campaign", furniDirectory, unityFurniDirectory, revision, true, sprite);
+            DownloadRequest(sprite + "_campaign", furniDirectory, unityFurniDirectory, revision, true, sprite);
+            DownloadRequest(sprite + "c", furniDirectory, unityFurniDirectory, revision, true, sprite);
+            DownloadRequest(sprite + "_c", furniDirectory, unityFurniDirectory, revision, true, sprite);
 
             for (int i = 0; i < 10; i++)
             {
@@ -343,7 +343,7 @@ namespace DataArchiver
             }
         }
 
-        private static void DownloadRequest(string sprite, string furniDirectory, string unityFurniDirectory, string revision, bool isAdvertisement = false)
+        private static void DownloadRequest(string sprite, string furniDirectory, string unityFurniDirectory, string revision, bool isAdvertisement = false, string originalSpriteName = null)
         {
             try
             {
@@ -364,7 +364,7 @@ namespace DataArchiver
 
                     if (isAdvertisement)
                     {
-                        Log.Information("Downloaded advertisement: {Sprite}", sprite);
+                        Log.Information("Downloaded advertisement: {originalSpriteName} => {advertisementSpriteName}", originalSpriteName, sprite);
                     }
 
                 }
