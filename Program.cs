@@ -361,10 +361,10 @@ namespace DataArchiver
                     Console.ForegroundColor = ConsoleColor.Blue;
                     Console.WriteLine("Downloaded SWF: " + sprite);
                     Console.ResetColor();
-
+                    
                     if (!ItemList.Select(x => x.FileName.Contains("*") ? x.FileName.Split('*')[0] : x.FileName).Any(x => x == sprite)) 
                     {
-                        Log.Information("Downloaded advertisement: {originalSpriteName} => {advertisementSpriteName}", originalSpriteName, sprite);
+                        Log.Information("Downloaded advertisement: " + originalSpriteName + " => " + sprite);
                     }
                 }
             }
