@@ -78,7 +78,7 @@ namespace DataArchiver
                 .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 
-            Log.Information("Application started");
+            Log.Information("DataArchiver started");
 
             var writeDirectory = string.Format("{0}-{1}", "gamedata", DateTime.Now.ToString("yyyy-dd-M"));
             List<string> countryTLDs = new List<string>();
