@@ -364,7 +364,10 @@ namespace DataArchiver
 
                     if (isAdvertisement)
                     {
-                        Log.Information("Downloaded advertisement: {originalSpriteName} => {advertisementSpriteName}", originalSpriteName, sprite);
+                        if (!ItemList.Select(x => x.FileName.Contains("*") ? item.FileName.Split('*')[0] : item.FileName).Any(x => x == sprite)) 
+                        {
+                            Log.Information("Downloaded advertisement: {originalSpriteName} => {advertisementSpriteName}", originalSpriteName, sprite);
+                        }
                     }
 
                 }
